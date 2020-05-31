@@ -59,8 +59,6 @@ class SplitWriteStream extends fs.WriteStream {
 
     this._checkEnd()
 
-    this._streams = []
-
     this.once('open', () => {
       if (!this.finished && this.fd) {
         //check meta
@@ -165,26 +163,23 @@ class SplitWriteStream extends fs.WriteStream {
   }
 
   partStream(index) {
-    if (!this._streams[index]) {
+    let range = this._getRange(index)
+    assert(range, 'Out of range')
+    const part = new PartWriteStream(this.path, {
+      fd: this.fd,
+      start: range[0],
+      autoClose: !this.fd,
+      parent: this
+    })
+    part.on('writed', () => {
       let range = this._getRange(index)
-      assert(range, 'Out of range')
-      const part = new PartWriteStream(this.path, {
-        fd: this.fd,
-        start: range[0],
-        autoClose: !this.fd,
-        parent: this
-      })
-      part.on('writed', () => {
-        let range = this._getRange(index)
-        range[0] = part.start + part.bytesWritten
-        try {
-          this._updateMetaFile()
-        } catch (er) {}
-        this._checkEnd()
-      })
-      this._streams[index] = part
-    }
-    return this._streams[index]
+      range[0] = part.start + part.bytesWritten
+      try {
+        this._updateMetaFile()
+      } catch (er) {}
+      this._checkEnd()
+    })
+    return part
   }
 }
 

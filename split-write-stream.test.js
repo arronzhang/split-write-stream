@@ -81,9 +81,9 @@ describe('split write stream', () => {
       maxPart: 3
     })
     stream.on('open', () => {
-      expect(stream.partStream(0)).toStrictEqual(stream.partStream(0))
-      stream.partStream(0).write(Buffer.from('abc'))
-      stream.partStream(0).end()
+      let first = stream.partStream(0)
+      first.write(Buffer.from('abc'))
+      first.end()
       setTimeout(() => {
         stream.partStream(1).write(Buffer.from('abc'))
         stream.partStream(2).write(Buffer.from('abc'))
@@ -102,9 +102,10 @@ describe('split write stream', () => {
       maxPart: 3
     })
 
-    expect(stream.partStream(0)).toStrictEqual(stream.partStream(0))
-    stream.partStream(0).write(Buffer.from('abc'))
-    stream.partStream(0).end()
+    let first = stream.partStream(0)
+    first.write(Buffer.from('abc'))
+    first.end()
+
     setTimeout(() => {
       stream.partStream(1).write(Buffer.from('abc'))
       stream.partStream(2).write(Buffer.from('abc'))
