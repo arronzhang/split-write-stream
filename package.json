@@ -1,0 +1,69 @@
+{
+  "name": "split-write-stream",
+  "version": "0.1.0",
+  "description": "Split write stream.",
+  "main": "./split-write-stream.js",
+  "scripts": {
+    "eslint": "eslint --format codeframe *.js",
+    "prettier": "prettier --write *.js",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "test-travis": "npm run eslint && jest --coverage --collectCoverageFrom=*.js",
+    "test": "npm run eslint && jest --passWithNoTests"
+  },
+  "author": "arronzhang@me.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "coveralls": "^3.0.9",
+    "eslint": "^6.7.2",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^3.1.0",
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1",
+    "yargs": "^15.3.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/test.js"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run eslint"
+    }
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "bracketSpacing": true,
+    "semi": false
+  },
+  "eslintIgnore": [
+  ],
+  "eslintConfig": {
+    "extends": [
+      "plugin:prettier/recommended",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 9
+    },
+    "rules": {
+      "no-unused-vars": "warn",
+      "no-undef": "error"
+    },
+    "env": {
+      "es6": true,
+      "jest": true,
+      "node": true
+    }
+  }
+}
