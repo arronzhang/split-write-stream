@@ -154,4 +154,34 @@ describe('split write stream', () => {
       })
     })
   })
+
+  test('ignore without meta file', done => {
+    let stream = new SplitWriteStream(testFile, {
+      fileSize: 9,
+      maxPart: 3
+    })
+    stream.on('open', () => {
+      let buf = fs.readFileSync(testFile)
+      expect(buf.length).toBe(9)
+      let part = stream.partStream(0)
+      part.write(Buffer.from('abc'))
+      part.end()
+      part.on('finish', () => {
+        stream.end()
+      })
+    })
+    stream.on('finish', () => {
+      if (fs.existsSync(testMetaFile)) {
+        fs.unlinkSync(testMetaFile)
+      }
+      expect(fs.readFileSync(testFile, 'UTF-8').slice(0, 3)).toEqual('abc')
+      let secStream = new SplitWriteStream(testFile, {
+        fileSize: 9
+      })
+      secStream.on('open', () => {
+        expect(fs.readFileSync(testFile, 'UTF-8').slice(0, 3)).toEqual('abc')
+        done()
+      })
+    })
+  })
 })

@@ -31,9 +31,13 @@ class SplitWriteStream extends fs.WriteStream {
       'options.fileSize must bigger than zero for split'
     )
 
+    options.flags = 'r+'
+
     const fileExists = fs.existsSync(path)
     const metaPath = path + '.' + (options.metaExtname || 'sws')
     const metaExists = fs.existsSync(metaPath)
+
+    if (!fileExists) fs.writeFileSync(path, Buffer.from([]))
 
     super(path, options)
     this.options = options
@@ -169,6 +173,7 @@ class SplitWriteStream extends fs.WriteStream {
       fd: this.fd,
       start: range[0],
       autoClose: !this.fd,
+      flags: 'r+',
       parent: this
     })
     part.on('writed', () => {
